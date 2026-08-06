@@ -25,13 +25,13 @@
     "maplibre-gl": "^5.24.0",
     "maplibre-gl-layer-control": "^0.17.4",
     "pmtiles": "^4.4.1",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "typescript": "^7.0.2"
   },
   "peerDependencies": {
