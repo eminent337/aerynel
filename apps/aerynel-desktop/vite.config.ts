@@ -378,6 +378,48 @@ function wmsProxyPlugin(): Plugin {
   };
 }
 
+// Dev-only: serve a real, self-destructing `/sw.js` so a stale Service Worker
+// registered by an earlier production build/preview (which precached the old
+// geolibre app shell) gets replaced and removed. Without this, the browser's
+// SW update check fetches `/sw.js`, gets the SPA fallback HTML (text/html), the
+// byte-diff check fails, and the stale SW keeps serving the old shell forever —
+// which shows the old UI in a normal browser while private mode (no SW) is
+// clean. The script below unregisters itself and clears workbox caches, so the
+// next load after visiting `/` in the affected browser is SW-free.
+function devStaleSwCleanupPlugin(): Plugin {
+  return {
+    name: "aerynel-dev-stale-sw-cleanup",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const requestUrl = new URL(req.url ?? "/", "http://localhost");
+        if (requestUrl.pathname !== "/sw.js") {
+          next();
+          return;
+        }
+        const script = [
+          "self.addEventListener('install', () => self.skipWaiting());",
+          "self.addEventListener('activate', (event) => {",
+          "  event.waitUntil((async () => {",
+          "    const keys = await caches.keys();",
+          "    await Promise.all(keys.filter((k) => k.startsWith('workbox-')).map((k) => caches.delete(k)));",
+          "    await self.registration.unregister();",
+          "    await self.clients.claim();",
+          "    const wins = await self.clients.matchAll({ type: 'window' });",
+          "    await Promise.all(wins.map((w) => w.navigate(w.url).catch(() => undefined)));",
+          "  })());",
+          "});",
+          "",
+        ].join("\n");
+        res.statusCode = 200;
+        res.setHeader("content-type", "application/javascript");
+        res.setHeader("cache-control", "no-cache");
+        res.end(script);
+      });
+    },
+  };
+}
+
 function stripDuckDbWorkerSourcemapPlugin(): Plugin {
   return {
     name: "aerynel-strip-duckdb-worker-sourcemap",
@@ -850,6 +892,7 @@ export default defineConfig({
     copyCesiumAssets(path.resolve(__dirname, "public/cesium")),
     react(),
     wmsProxyPlugin(),
+    devStaleSwCleanupPlugin(),
     selectiveJsMinifyPlugin(),
     removeJupyterLiteFromTauriDistPlugin(),
     ...pwaPlugin(),
