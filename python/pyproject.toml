@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aerynel"
+dynamic = ["version"]
+description = "Aerynel in Jupyter: the full Aerynel GIS app as an anywidget, with a leafmap-style Python API."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Qiusheng Wu", email = "giswqs@gmail.com" }]
+keywords = ["aerynel", "gis", "maplibre", "jupyter", "anywidget", "mapping"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: Jupyter",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Scientific/Engineering :: GIS",
+]
+dependencies = ["anywidget>=0.9", "traitlets>=5", "jupyter-ui-poll>=0.2"]
+
+[project.optional-dependencies]
+all = ["geopandas", "shapely"]
+dev = ["pytest", "build", "anywidget[dev]", "jupyter-server"]
+
+[project.urls]
+Homepage = "https://aerynel.app"
+Repository = "https://github.com/aryee/Aerynel"
+
+[tool.hatch.version]
+path = "src/aerynel/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aerynel"]
+# The bundled app under static/ is produced by the build hook and git-ignored,
+# so it must be re-included explicitly here (VCS file discovery skips it).
+artifacts = ["src/aerynel/static/**"]
+
+# Install the Jupyter Server config drop-in to {sys.prefix}/etc/jupyter so the
+# bundled app-serving extension (aerynel._load_jupyter_server_extension)
+# auto-enables on `pip install aerynel`, including on managed JupyterHubs.
+[tool.hatch.build.targets.wheel.shared-data]
+"jupyter-config/jupyter_server_config.d/aerynel.json" = "etc/jupyter/jupyter_server_config.d/aerynel.json"
+
+[tool.hatch.build.targets.sdist]
+artifacts = ["src/aerynel/static/**"]
+
+[tool.hatch.build.targets.wheel.hooks.custom]
+path = "hatch_build.py"
+
+[tool.hatch.build.targets.sdist.hooks.custom]
+path = "hatch_build.py"

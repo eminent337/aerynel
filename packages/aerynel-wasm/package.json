@@ -1,0 +1,46 @@
+{
+  "name": "aerynel-wasm",
+  "type": "module",
+  "version": "0.11.0",
+  "private": true,
+  "description": "Pure-Rust geospatial toolkit (whitebox_next_gen) compiled to WebAssembly (WASI) for Aerynel's in-browser tool execution",
+  "license": "MIT",
+  "keywords": [
+    "geospatial",
+    "wasm",
+    "wasi",
+    "gis",
+    "geotiff",
+    "lidar",
+    "aerynel",
+    "whitebox"
+  ],
+  "main": "aerynel_wasm.js",
+  "types": "aerynel_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ],
+  "files": [
+    "aerynel_wasm.js",
+    "aerynel_wasm_bg.wasm",
+    "aerynel_wasm.d.ts",
+    "aerynel_wasm_bg.wasm.d.ts",
+    "aerynel-cli.wasm",
+    "tools.mjs",
+    "tools.d.ts",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./aerynel_wasm.d.ts",
+      "default": "./aerynel_wasm.js"
+    },
+    "./tools": {
+      "types": "./tools.d.ts",
+      "default": "./tools.mjs"
+    }
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.4.2"
+  }
+}

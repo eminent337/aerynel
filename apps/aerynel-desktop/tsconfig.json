@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@aryee/core": ["../../packages/core/src"],
+      "@aryee/map": ["../../packages/map/src"],
+      "@aryee/plugins": ["../../packages/plugins/src"],
+      "@aryee/processing": ["../../packages/processing/src"],
+      "@aryee/ui": ["../../packages/ui/src"],
+    }
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/map" },
+    { "path": "../../packages/plugins" },
+    { "path": "../../packages/processing" },
+    { "path": "../../packages/ui" }
+  ]
+}

@@ -1,0 +1,15 @@
+name = "aerynel-viewer"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+
+# Binds the custom domains on deploy. The aerynel.app domain is managed in this
+# Cloudflare account. web.aerynel.app is the current hostname; viewer.aerynel.app
+# is the original alias. If migrating to GitHub Pages entirely this worker may be
+# deprecated — see the hosting plan in the repo docs.
+[[routes]]
+pattern = "web.aerynel.app"
+custom_domain = true
+
+[[routes]]
+pattern = "viewer.aerynel.app"
+custom_domain = true
